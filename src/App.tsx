@@ -1,26 +1,12 @@
 import { apiKey } from "@/../secret/apiKey";
 import "@/App.css";
+import { Article, Articles, defaultArticles } from "@/model/Articles";
 import axios from "axios";
 import { useState } from "react";
 
 type Response = {
   data: { articles: Articles };
 };
-
-type Article = {
-  author: string | null;
-  content: string | null;
-  description: string | null;
-  publishedAt: string | null;
-  source: { id: string; name: string } | null;
-  title: string | null;
-  url: string | null;
-  urlToImage: string | null;
-  showDescription?: boolean;
-};
-type Articles = Article[] | null;
-
-const defaultArticles: Articles = null;
 
 function App() {
   const [count, setCount] = useState(0);
