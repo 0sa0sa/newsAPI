@@ -1,34 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { apiKey } from "@/../secret/apiKey";
+import "@/App.css";
+import axios from "axios";
+import { useState } from "react";
+
+type Response = {
+  data: { articles: Articles };
+};
+
+type Article = {
+  author: string | null;
+  content: string | null;
+  description: string | null;
+  publishedAt: string | null;
+  source: { id: string; name: string } | null;
+  title: string | null;
+  url: string | null;
+  urlToImage: string | null;
+  showDescription?: boolean;
+};
+type Articles = Article[] | null;
+
+const defaultArticles: Articles = null;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [articles, setArticles] = useState(defaultArticles);
+
+  const request = async () => {
+    const url =
+      "https://newsapi.org/v2/top-headlines?" +
+      "country=us&" +
+      `apiKey=${apiKey}`;
+    const res = await axios.request<Response, Response>({ method: "get", url });
+    const articles = res.data.articles;
+    console.log("res ", articles);
+    setArticles(articles);
+  };
+
+  const showDescription = (arti: Article) => {
+    const newArticle = articles?.map(article =>
+      article.title === arti.title
+        ? {
+            ...arti,
+            description: article.description ?? "no description",
+            showDescription: !article.showDescription,
+          }
+        : article
+    );
+    setArticles(newArticle ?? null);
+  };
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>News List</h1>
+      <ul>
+        {articles &&
+          articles.map(article => (
+            <li>
+              <button onClick={() => showDescription(article)}>
+                {article.title}
+              </button>
+              <div>{article.showDescription && article.description}</div>
+            </li>
+          ))}
+      </ul>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => setCount(count => count + 1)}>
           count is {count}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={() => request()}>fetch</button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
