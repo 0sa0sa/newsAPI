@@ -1,11 +1,14 @@
-import { apiKey } from "@/../secret/apiKey";
 import "@/App.css";
 import { Article, Articles, defaultArticles } from "@/model/Articles";
 import axios from "axios";
 import { useState } from "react";
 
 type Response = {
-  data: { articles: Articles };
+  data: {
+    status: string;
+    totalResults: number;
+    articles: Articles;
+  };
 };
 
 function App() {
@@ -13,11 +16,21 @@ function App() {
   const [articles, setArticles] = useState(defaultArticles);
 
   const request = async () => {
-    const url =
-      "https://newsapi.org/v2/top-headlines?" +
-      "country=us&" +
-      `apiKey=${apiKey}`;
-    const res = await axios.request<Response, Response>({ method: "get", url });
+    // const url =
+    //   "https://newsapi.org/v2/top-headlines?" +
+    //   "country=us&" +
+    //   `apiKey=${apiKey}`;
+    const url = "https://quiet-ocean-29539.herokuapp.com/";
+    // const url = "http://localhost:8080";
+    const res = await axios.request<Response, Response>({
+      method: "get",
+      url,
+      // headers: {
+      //   "Content-Type": "application/json;charset=UTF-8",
+      //   "Access-Control-Allow-Origin": "*", // Could work and fix the previous problem, but not in all APIs
+      // },
+    });
+    console.log("res ", res);
     const articles = res.data.articles;
     console.log("res ", articles);
     setArticles(articles);
@@ -39,10 +52,16 @@ function App() {
   return (
     <div className="App">
       <h1>News List</h1>
+      <div className="card">
+        <button onClick={() => setCount(count => count + 1)}>
+          count is {count}
+        </button>
+        <button onClick={() => request()}>fetch</button>
+      </div>
       <ul>
         {articles &&
           articles.map(article => (
-            <li>
+            <li key={article.url}>
               <button onClick={() => showDescription(article)}>
                 {article.title}
               </button>
@@ -50,12 +69,6 @@ function App() {
             </li>
           ))}
       </ul>
-      <div className="card">
-        <button onClick={() => setCount(count => count + 1)}>
-          count is {count}
-        </button>
-        <button onClick={() => request()}>fetch</button>
-      </div>
     </div>
   );
 }
