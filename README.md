@@ -7,6 +7,10 @@ newsAPI を使ったハッカソン用の動作確認.
 
 https://newsapi.org/docs
 
+## デプロイ先
+
+https://newsapi-react.web.app/
+
 ## 環境構築の参考
 
 [React+TypeScript+ESLint+Prettier をまとめて環境構築](https://zenn.dev/jpn_asane/articles/d7f44682b74fdc)
